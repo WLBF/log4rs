@@ -177,7 +177,7 @@ mod imp {
     use std::fmt;
     use std::mem;
 
-    use encode::{self, Style, Color};
+    use encode::{self, Color, Style};
     use priv_io::{StdWriter, StdWriterLock};
 
     struct RawConsole {
@@ -193,8 +193,8 @@ mod imp {
             let mut attrs = self.defaults;
 
             if let Some(text) = style.text {
-                attrs &= !((winapi::FOREGROUND_RED | winapi::FOREGROUND_GREEN |
-                            winapi::FOREGROUND_BLUE) as winapi::WORD);
+                attrs &= !((winapi::FOREGROUND_RED | winapi::FOREGROUND_GREEN
+                    | winapi::FOREGROUND_BLUE) as winapi::WORD);
                 attrs |= match text {
                     Color::Black => 0,
                     Color::Red => winapi::FOREGROUND_RED,
@@ -210,8 +210,8 @@ mod imp {
             }
 
             if let Some(background) = style.background {
-                attrs &= !((winapi::BACKGROUND_RED | winapi::BACKGROUND_GREEN |
-                            winapi::BACKGROUND_BLUE) as winapi::WORD);
+                attrs &= !((winapi::BACKGROUND_RED | winapi::BACKGROUND_GREEN
+                    | winapi::BACKGROUND_BLUE) as winapi::WORD);
                 attrs |= match background {
                     Color::Black => 0,
                     Color::Red => winapi::BACKGROUND_RED,
@@ -360,7 +360,7 @@ mod imp {
 mod test {
     use std::io::Write;
 
-    use encode::{Style, Color};
+    use encode::{Color, Style};
     use encode::Write as EncodeWrite;
     use super::*;
 
@@ -373,7 +373,12 @@ mod test {
         let mut w = w.lock();
 
         w.write_all(b"normal ").unwrap();
-        w.set_style(Style::new().text(Color::Red).background(Color::Blue).intense(true)).unwrap();
+        w.set_style(
+            Style::new()
+                .text(Color::Red)
+                .background(Color::Blue)
+                .intense(true),
+        ).unwrap();
         w.write_all(b"styled").unwrap();
         w.set_style(Style::new().text(Color::Green)).unwrap();
         w.write_all(b" styled2").unwrap();
