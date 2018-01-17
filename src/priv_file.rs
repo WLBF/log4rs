@@ -52,6 +52,27 @@ pub fn init_file<P>(path: P, deserializers: Deserializers) -> Result<(), Error>
     }
 }
 
+/// Initializes the log4rs Config via a file.
+///
+/// Configuration is read from a file located at the provided path on the
+/// filesystem and components are created from the provided `Deserializers`.
+///
+/// Any nonfatal errors encountered when processing the configuration are
+/// reported to stderr.
+///
+/// Requires the `file` feature (enabled by default).
+pub fn config_from_file<P>(path: P, deserializers: Deserializers) -> Result<Config, Error>
+    where P: AsRef<Path>
+{
+    let path = path.as_ref().to_path_buf();
+    let format = Format::from_path(&path)?;
+    let source = read_config(&path)?;
+    // An Err here could come because mtime isn't available, so don't bail
+    let config = format.parse(&source)?;
+
+    Ok(deserialize(&config, &deserializers))
+}
+
 /// An error initializing the logging framework from a file.
 #[derive(Debug)]
 pub enum Error {

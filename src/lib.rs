@@ -218,7 +218,7 @@ use std::sync::Arc;
 use log::{LogLevel, LogMetadata, LogRecord, LogLevelFilter, SetLoggerError, MaxLogLevelFilter};
 
 #[cfg(feature = "file")]
-pub use priv_file::{init_file, Error};
+pub use priv_file::{init_file, config_from_file, Error};
 
 use append::Append;
 use config::Config;
@@ -393,10 +393,13 @@ impl SharedLogger {
     }
 }
 
-struct Logger(Arc<ArcCell<SharedLogger>>);
+
+/// A struct which implement log::Log trait.
+pub struct Logger(Arc<ArcCell<SharedLogger>>);
 
 impl Logger {
-    fn new(config: config::Config) -> Logger {
+    /// Initializes logger implement log::Log trait with the provided config.
+    pub fn new(config: config::Config) -> Logger {
         Logger(Arc::new(ArcCell::new(Arc::new(SharedLogger::new(config)))))
     }
 
