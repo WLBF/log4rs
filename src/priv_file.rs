@@ -73,6 +73,21 @@ pub fn config_from_file<P>(path: P, deserializers: Deserializers) -> Result<Conf
     Ok(deserialize(&config, &deserializers))
 }
 
+/// Initializes the log4rs Config via a config string.
+///
+/// Configuration is read from a config string
+/// and components are created from the provided `Deserializers`.
+///
+/// Any nonfatal errors encountered when processing the configuration are
+/// reported to stderr.
+///
+pub fn config_from_str(source: &str, format: Format, deserializers: Deserializers) -> Result<Config, Error>
+{
+    // An Err here could come because mtime isn't available, so don't bail
+    let config = format.parse(source)?;
+    Ok(deserialize(&config, &deserializers))
+}
+
 /// An error initializing the logging framework from a file.
 #[derive(Debug)]
 pub enum Error {
@@ -119,7 +134,9 @@ impl From<Box<error::Error + Sync + Send>> for Error {
     }
 }
 
-enum Format {
+/// An format type of config file or string.
+#[allow(missing_docs)]
+pub enum Format {
     #[cfg(feature = "yaml_format")]
     Yaml,
     #[cfg(feature = "json_format")]

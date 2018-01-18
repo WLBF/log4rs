@@ -218,7 +218,7 @@ use std::sync::Arc;
 use log::{LogLevel, LogMetadata, LogRecord, LogLevelFilter, SetLoggerError, MaxLogLevelFilter};
 
 #[cfg(feature = "file")]
-pub use priv_file::{init_file, config_from_file, Error};
+pub use priv_file::{init_file, config_from_file, config_from_str, Format, Error};
 
 use append::Append;
 use config::Config;
